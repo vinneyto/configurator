@@ -2,7 +2,7 @@ import { Group } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { AppModule } from './types';
 
-const BATHROOM_MODEL_URL = '/models/bathroom-interior.glb';
+const BATHROOM_MODEL_URL = '/models/bathroom_interior.glb';
 
 export const createModelLoaderModule: AppModule = (facade) => {
   const loader = new GLTFLoader();
