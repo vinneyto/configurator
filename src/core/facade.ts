@@ -1,30 +1,30 @@
-import * as THREE from 'three';
+import { Clock, Color, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { EventEmitter } from './events';
 
 export class AppFacade {
-  readonly scene: THREE.Scene;
-  readonly camera: THREE.PerspectiveCamera;
-  readonly renderer: THREE.WebGLRenderer;
+  readonly scene: Scene;
+  readonly camera: PerspectiveCamera;
+  readonly renderer: WebGLRenderer;
   readonly events: EventEmitter;
 
-  private readonly clock: THREE.Clock;
+  private readonly clock: Clock;
   private isRunning = false;
 
   constructor(container: HTMLElement) {
-    this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x10131a);
+    this.scene = new Scene();
+    this.scene.background = new Color(0x10131a);
 
-    this.camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+    this.camera = new PerspectiveCamera(60, 1, 0.1, 1000);
     this.camera.position.set(0, 0, 5);
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer = new WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(container.clientWidth, container.clientHeight);
 
     container.appendChild(this.renderer.domElement);
 
     this.events = new EventEmitter();
-    this.clock = new THREE.Clock();
+    this.clock = new Clock();
   }
 
   start(): void {
