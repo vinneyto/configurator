@@ -1,4 +1,5 @@
 import { Clock, Color, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { EventEmitter } from './events';
 
 export class AppFacade {
@@ -6,6 +7,7 @@ export class AppFacade {
   readonly camera: PerspectiveCamera;
   readonly renderer: WebGLRenderer;
   readonly events: EventEmitter;
+  orbitControls: OrbitControls | null = null;
 
   private readonly clock: Clock;
   private isRunning = false;

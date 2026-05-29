@@ -1,15 +1,9 @@
 import { Box3, Sphere, Vector3 } from 'three';
-import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import type { AppModule } from './types';
 
 export const createOrbitRadiusFromModelModule: AppModule = (facade) => {
-  let controls: OrbitControls | null = null;
-
-  const unsubscribeControlsReady = facade.events.on('orbitControlsReady', (event) => {
-    controls = event.controls;
-  });
-
   const unsubscribeModelLoaded = facade.events.on('modelLoaded', ({ rootGroup }) => {
+    const controls = facade.orbitControls;
     if (!controls) {
       return;
     }
@@ -38,8 +32,6 @@ export const createOrbitRadiusFromModelModule: AppModule = (facade) => {
   });
 
   return () => {
-    unsubscribeControlsReady();
     unsubscribeModelLoaded();
-    controls = null;
   };
 };

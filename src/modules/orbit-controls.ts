@@ -7,7 +7,7 @@ export const createOrbitControlsModule: AppModule = (facade) => {
   controls.target.set(0, 0, 0);
   controls.update();
 
-  facade.events.emit('orbitControlsReady', { controls });
+  facade.orbitControls = controls;
 
   const unsubscribeModelLoaded = facade.events.on('modelLoaded', ({ rootGroup }) => {
     controls.target.copy(rootGroup.position);
@@ -21,6 +21,7 @@ export const createOrbitControlsModule: AppModule = (facade) => {
   return () => {
     unsubscribeModelLoaded();
     unsubscribeUpdate();
+    facade.orbitControls = null;
     controls.dispose();
   };
 };
