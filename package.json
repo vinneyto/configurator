@@ -20,5 +20,9 @@
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx,css,scss,html,json,md,yml,yaml}": "prettier --write"
+  },
+  "dependencies": {
+    "@types/three": "^0.184.1",
+    "three": "^0.184.0"
   }
 }
