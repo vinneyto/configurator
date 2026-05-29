@@ -1,6 +1,8 @@
 import './style.css';
 import { AppFacade } from './core/facade';
-import { createTestSceneModule } from './modules/test-scene';
+import { createBasicLightingModule } from './modules/basic-lighting';
+import { createModelLoaderModule } from './modules/model-loader';
+import { createOrbitControlsModule } from './modules/orbit-controls';
 import { createViewportResizeModule } from './modules/viewport-resize';
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
@@ -11,7 +13,12 @@ if (!appRoot) {
 
 const facade = new AppFacade(appRoot);
 
-const teardownModules = [createViewportResizeModule(facade), createTestSceneModule(facade)];
+const teardownModules = [
+  createViewportResizeModule(facade),
+  createBasicLightingModule(facade),
+  createOrbitControlsModule(facade),
+  createModelLoaderModule(facade),
+];
 
 facade.start();
 
