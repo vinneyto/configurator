@@ -19,7 +19,8 @@ export const createOrbitRadiusFromModelModule: AppModule = (facade) => {
     bbox.getBoundingSphere(sphere);
 
     const radius = Math.max(sphere.radius, 0.1);
-    const minDistance = Math.max(radius * 0.35, 0.1);
+    const orbitDistanceFactor = 0.3;
+    const minDistance = Math.max(radius * orbitDistanceFactor, 0.1);
     const maxDistance = Math.max(radius * 8, minDistance + 1);
 
     controls.minDistance = minDistance;
