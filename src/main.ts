@@ -4,6 +4,7 @@ import { createBasicLightingModule } from './modules/basic-lighting';
 import { createModelCenteringModule } from './modules/model-centering';
 import { createModelLoaderModule } from './modules/model-loader';
 import { createOrbitControlsModule } from './modules/orbit-controls';
+import { createOrbitRadiusFromModelModule } from './modules/orbit-radius-from-model';
 import { createViewportResizeModule } from './modules/viewport-resize';
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
@@ -18,6 +19,7 @@ const teardownModules = [
   createViewportResizeModule(facade),
   createBasicLightingModule(facade),
   createOrbitControlsModule(facade),
+  createOrbitRadiusFromModelModule(facade),
   createModelLoaderModule(facade),
   createModelCenteringModule(facade),
 ];

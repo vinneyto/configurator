@@ -1,4 +1,5 @@
 import type { Group, Object3D } from 'three';
+import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export type UpdateEvent = {
   deltaSeconds: number;
@@ -11,9 +12,14 @@ export type ModelLoadedEvent = {
   model: Object3D;
 };
 
+export type OrbitControlsReadyEvent = {
+  controls: OrbitControls;
+};
+
 type EventMap = {
   update: UpdateEvent;
   modelLoaded: ModelLoadedEvent;
+  orbitControlsReady: OrbitControlsReadyEvent;
 };
 
 type EventKey = keyof EventMap;
@@ -23,6 +29,7 @@ export class EventEmitter {
   private listeners: { [K in EventKey]: Set<Listener<K>> } = {
     update: new Set(),
     modelLoaded: new Set(),
+    orbitControlsReady: new Set(),
   };
 
   on<K extends EventKey>(event: K, listener: Listener<K>): () => void {
