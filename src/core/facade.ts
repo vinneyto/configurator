@@ -1,6 +1,6 @@
 import { Color, Group, PerspectiveCamera, Scene, Timer } from 'three';
 import { RenderPipeline, WebGPURenderer } from 'three/webgpu';
-import { mrt, normalView, output, pass } from 'three/tsl';
+import { diffuseColor, directionToColor, mrt, normalView, output, pass, velocity } from 'three/tsl';
 import { createEventBus, type EventBus } from './events';
 
 export class AppFacade {
@@ -32,7 +32,9 @@ export class AppFacade {
     this.scenePass.setMRT(
       mrt({
         output,
-        normal: normalView,
+        diffuseColor,
+        normal: directionToColor(normalView),
+        velocity,
       })
     );
 
