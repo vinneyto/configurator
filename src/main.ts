@@ -1,7 +1,6 @@
 import './style.css';
 import { AppFacade } from './core/facade';
 import { createBasicLightingModule } from './modules/basic-lighting';
-import { createModelCenteringModule } from './modules/model-centering';
 import { createModelParserModule } from './modules/model-parser';
 import { createOrbitControlsModule } from './modules/orbit-controls';
 import { createViewportResizeModule } from './modules/viewport-resize';
@@ -21,7 +20,6 @@ const teardownModules = [
   createOrbitControlsModule(facade),
   createModelLoaderModule(facade),
   createModelParserModule(facade),
-  createModelCenteringModule(facade),
 ];
 
 facade.start();
