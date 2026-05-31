@@ -28,7 +28,7 @@ export class AppFacade {
 
     container.appendChild(this.renderer.domElement);
 
-    this.scenePass = pass(this.scene, this.camera);
+    this.scenePass = pass(this.scene, this.camera, { samples: 1 });
     this.scenePass.setMRT(
       mrt({
         output,
