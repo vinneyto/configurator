@@ -5,19 +5,34 @@ import { metalRough } from '@gltf-transform/functions';
 
 const BATHROOM_MODEL_URL = '/models/bathroom_interior.glb';
 
-async function loadAndTransform() {
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) {
+    throw new DOMException('The operation was aborted', 'AbortError');
+  }
+}
+
+function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === 'AbortError';
+}
+
+async function loadAndTransform(signal?: AbortSignal) {
+  throwIfAborted(signal);
+
   const io = new WebIO().registerExtensions(KHRONOS_EXTENSIONS);
   const document = await io.read(BATHROOM_MODEL_URL);
 
+  throwIfAborted(signal);
   await document.transform(metalRough());
 
+  throwIfAborted(signal);
   return await io.writeBinary(document);
 }
 
 export const createModelLoaderModule: AppModule = (facade) => {
   let isDisposed = false;
+  const abortController = new AbortController();
 
-  loadAndTransform()
+  loadAndTransform(abortController.signal)
     .then((glb) => {
       if (isDisposed) {
         return;
@@ -26,7 +41,7 @@ export const createModelLoaderModule: AppModule = (facade) => {
       facade.events.emit('loadModel', { buffer: glb.buffer });
     })
     .catch((error) => {
-      if (isDisposed) {
+      if (isDisposed || isAbortError(error)) {
         return;
       }
 
@@ -35,5 +50,6 @@ export const createModelLoaderModule: AppModule = (facade) => {
 
   return () => {
     isDisposed = true;
+    abortController.abort();
   };
 };
