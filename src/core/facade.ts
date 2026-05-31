@@ -19,16 +19,16 @@ export class AppFacade {
     this.scene = new Scene();
     this.scene.background = new Color(0x10131a);
 
-    this.camera = new PerspectiveCamera(60, 1, 0.1, 1000);
+    this.camera = new PerspectiveCamera(60, 1, 0.1, 20);
     this.camera.position.set(0, 0, 5);
 
-    this.renderer = new WebGPURenderer({ antialias: true });
+    this.renderer = new WebGPURenderer({ antialias: false });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(container.clientWidth, container.clientHeight);
 
     container.appendChild(this.renderer.domElement);
 
-    this.scenePass = pass(this.scene, this.camera, { samples: 1 });
+    this.scenePass = pass(this.scene, this.camera);
     this.scenePass.setMRT(
       mrt({
         output,

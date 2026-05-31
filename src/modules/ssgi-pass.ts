@@ -19,9 +19,7 @@ export const createSsgiPassModule: AppModule = (facade) => {
   const normalTexture = facade.scenePass.getTexture('normal');
   normalTexture.type = UnsignedByteType;
 
-  const sceneNormal = sample((uv: any) => {
-    return colorToDirection(scenePassNormal.sample(uv));
-  });
+  const sceneNormal = sample((uv) => colorToDirection(scenePassNormal.sample(uv)));
 
   const giPass: any = ssgi(scenePassColor, scenePassDepth, sceneNormal, facade.camera);
   giPass.sliceCount.value = 2;

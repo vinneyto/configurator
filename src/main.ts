@@ -7,6 +7,7 @@ import { createOrbitControlsModule } from './modules/orbit-controls';
 import { createViewportResizeModule } from './modules/viewport-resize';
 import { createModelLoaderModule } from './modules/model-loader';
 import { createSsgiPassModule } from './modules/ssgi-pass';
+import { createModelZFightFixModule } from './modules/model-zfight-fix';
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
 
@@ -16,15 +17,19 @@ if (!appRoot) {
 
 const facade = new AppFacade(appRoot);
 
-const teardownModules = [
+const sceneModules = [
   createViewportResizeModule(facade),
-  createBasicLightingModule(facade),
   createOrbitControlsModule(facade),
-  createSsgiPassModule(facade),
+  createBasicLightingModule(facade),
   createModelLoaderModule(facade),
   createModelParserModule(facade),
   createModelCenteringModule(facade),
+  createModelZFightFixModule(facade),
 ];
+
+const postprocessingModules = [createSsgiPassModule(facade)];
+
+const teardownModules = [...sceneModules, ...postprocessingModules];
 
 void facade.start();
 
