@@ -16,6 +16,7 @@ export const createModelParserModule: AppModule = (facade) => {
 
       loadedRoot = gltf.scene;
       facade.scene.add(loadedRoot);
+      facade.events.emit('modelAdded', { at: performance.now() });
     } catch (error) {
       console.error('Failed to parse loaded model buffer', error);
     }
