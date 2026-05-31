@@ -1,3 +1,5 @@
+import mitt, { type Emitter } from 'mitt';
+
 export type UpdateEvent = {
   deltaSeconds: number;
   elapsedSeconds: number;
@@ -7,7 +9,7 @@ export type LoadModelEvent = {
   buffer: ArrayBuffer;
 };
 
-type EventMap = {
+export type EventMap = {
   update: UpdateEvent;
   loadModel: LoadModelEvent;
 };
@@ -15,23 +17,25 @@ type EventMap = {
 type EventKey = keyof EventMap;
 type Listener<K extends EventKey> = (payload: EventMap[K]) => void;
 
-export class EventEmitter {
-  private listeners: { [K in EventKey]: Set<Listener<K>> } = {
-    update: new Set(),
-    loadModel: new Set(),
+export type EventBus = {
+  on<K extends EventKey>(event: K, listener: Listener<K>): () => void;
+  emit<K extends EventKey>(event: K, payload: EventMap[K]): void;
+};
+
+export function createEventBus(): EventBus {
+  const emitter: Emitter<EventMap> = mitt<EventMap>();
+
+  return {
+    on<K extends EventKey>(event: K, listener: Listener<K>) {
+      emitter.on(event, listener);
+
+      return () => {
+        emitter.off(event, listener);
+      };
+    },
+
+    emit<K extends EventKey>(event: K, payload: EventMap[K]) {
+      emitter.emit(event, payload);
+    },
   };
-
-  on<K extends EventKey>(event: K, listener: Listener<K>): () => void {
-    this.listeners[event].add(listener);
-
-    return () => {
-      this.listeners[event].delete(listener);
-    };
-  }
-
-  emit<K extends EventKey>(event: K, payload: EventMap[K]): void {
-    this.listeners[event].forEach((listener) => {
-      listener(payload);
-    });
-  }
 }
