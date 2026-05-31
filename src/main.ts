@@ -6,6 +6,7 @@ import { createModelParserModule } from './modules/model-parser';
 import { createOrbitControlsModule } from './modules/orbit-controls';
 import { createViewportResizeModule } from './modules/viewport-resize';
 import { createModelLoaderModule } from './modules/model-loader';
+import { createIblEnvironmentModule } from './modules/ibl-environment';
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
 
@@ -18,6 +19,7 @@ const facade = new AppFacade(appRoot);
 const teardownModules = [
   createViewportResizeModule(facade),
   createBasicLightingModule(facade),
+  createIblEnvironmentModule(facade),
   createOrbitControlsModule(facade),
   createModelLoaderModule(facade),
   createModelParserModule(facade),
