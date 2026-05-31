@@ -1,10 +1,11 @@
-import { Color, Group, PerspectiveCamera, Scene, Timer, WebGLRenderer } from 'three';
+import { Color, Group, PerspectiveCamera, Scene, Timer } from 'three';
 import { createEventBus, type EventBus } from './events';
+import { WebGPURenderer } from 'three/webgpu';
 
 export class AppFacade {
   readonly scene: Scene;
   readonly camera: PerspectiveCamera;
-  readonly renderer: WebGLRenderer;
+  readonly renderer: WebGPURenderer;
   readonly events: EventBus;
   modelRoot: Group;
 
@@ -18,7 +19,7 @@ export class AppFacade {
     this.camera = new PerspectiveCamera(60, 1, 0.1, 1000);
     this.camera.position.set(0, 0, 5);
 
-    this.renderer = new WebGLRenderer({ antialias: true });
+    this.renderer = new WebGPURenderer({ antialias: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(container.clientWidth, container.clientHeight);
 
