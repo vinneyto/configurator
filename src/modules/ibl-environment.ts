@@ -1,5 +1,5 @@
 import { EquirectangularReflectionMapping, PMREMGenerator, type Texture } from 'three';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 import type { AppModule } from './types';
 
 const IBL_HDR_URL = '/hdr/environment.hdr';
@@ -11,7 +11,7 @@ export const createIblEnvironmentModule: AppModule = (facade) => {
   let isDisposed = false;
   let environmentTexture: Texture | null = null;
 
-  new RGBELoader().load(
+  new HDRLoader().load(
     IBL_HDR_URL,
     (hdrTexture) => {
       if (isDisposed) {
