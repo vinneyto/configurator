@@ -9,8 +9,22 @@ export type LoadModelEvent = {
   buffer: ArrayBuffer;
 };
 
+export type CameraParams = {
+  position: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  target: {
+    x: number;
+    y: number;
+    z: number;
+  };
+};
+
 export type ModelAddedEvent = {
   at: number;
+  camera: CameraParams;
 };
 
 export type EventMap = {
