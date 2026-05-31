@@ -1,9 +1,10 @@
 import './style.css';
 import { AppFacade } from './core/facade';
 import { createBasicLightingModule } from './modules/basic-lighting';
-import { createModelLoaderModule } from './modules/model-loader';
+import { createModelParserModule } from './modules/model-parser';
 import { createOrbitControlsModule } from './modules/orbit-controls';
 import { createViewportResizeModule } from './modules/viewport-resize';
+import { createModelLoaderModule } from './modules/model-loader';
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
 
@@ -18,6 +19,7 @@ const teardownModules = [
   createBasicLightingModule(facade),
   createOrbitControlsModule(facade),
   createModelLoaderModule(facade),
+  createModelParserModule(facade),
 ];
 
 facade.start();

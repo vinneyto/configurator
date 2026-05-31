@@ -1,4 +1,4 @@
-import { Clock, Color, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { Color, PerspectiveCamera, Scene, Timer, WebGLRenderer } from 'three';
 import { EventEmitter } from './events';
 
 export class AppFacade {
@@ -7,7 +7,7 @@ export class AppFacade {
   readonly renderer: WebGLRenderer;
   readonly events: EventEmitter;
 
-  private readonly clock: Clock;
+  private readonly timer: Timer;
   private isRunning = false;
 
   constructor(container: HTMLElement) {
@@ -24,14 +24,14 @@ export class AppFacade {
     container.appendChild(this.renderer.domElement);
 
     this.events = new EventEmitter();
-    this.clock = new Clock();
+    this.timer = new Timer();
+    this.timer.connect(document);
   }
 
   start(): void {
     if (this.isRunning) return;
 
     this.isRunning = true;
-    this.clock.start();
     this.renderer.setAnimationLoop(this.tick);
   }
 
@@ -46,9 +46,11 @@ export class AppFacade {
     this.renderer.setSize(width, height);
   }
 
-  private tick = (): void => {
-    const deltaSeconds = this.clock.getDelta();
-    const elapsedSeconds = this.clock.getElapsedTime();
+  private tick = (time: number): void => {
+    this.timer.update(time);
+
+    const deltaSeconds = this.timer.getDelta();
+    const elapsedSeconds = this.timer.getElapsed();
 
     this.events.emit('update', { deltaSeconds, elapsedSeconds });
     this.renderer.render(this.scene, this.camera);

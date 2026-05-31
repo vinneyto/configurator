@@ -1,29 +1,27 @@
-import { Group } from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { WebIO } from '@gltf-transform/core';
 import type { AppModule } from './types';
+import { KHRONOS_EXTENSIONS } from '@gltf-transform/extensions';
+import { metalRough } from '@gltf-transform/functions';
 
 const BATHROOM_MODEL_URL = '/models/bathroom_interior.glb';
 
+async function loadAndTransform() {
+  const io = new WebIO().registerExtensions(KHRONOS_EXTENSIONS);
+  const document = await io.read(BATHROOM_MODEL_URL);
+
+  await document.transform(metalRough());
+
+  return await io.writeBinary(document);
+}
+
 export const createModelLoaderModule: AppModule = (facade) => {
-  const loader = new GLTFLoader();
-  let loadedRoot: Group | null = null;
-
-  loader.load(
-    BATHROOM_MODEL_URL,
-    (gltf) => {
-      loadedRoot = gltf.scene;
-      facade.scene.add(loadedRoot);
-    },
-    undefined,
-    (error) => {
+  loadAndTransform()
+    .then((glb) => {
+      facade.events.emit('loadModel', { buffer: glb.buffer });
+    })
+    .catch((error) => {
       console.error(`Failed to load ${BATHROOM_MODEL_URL}`, error);
-    }
-  );
+    });
 
-  return () => {
-    if (loadedRoot) {
-      facade.scene.remove(loadedRoot);
-      loadedRoot = null;
-    }
-  };
+  return () => {};
 };

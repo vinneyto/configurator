@@ -3,8 +3,13 @@ export type UpdateEvent = {
   elapsedSeconds: number;
 };
 
+export type LoadModelEvent = {
+  buffer: ArrayBuffer;
+};
+
 type EventMap = {
   update: UpdateEvent;
+  loadModel: LoadModelEvent;
 };
 
 type EventKey = keyof EventMap;
@@ -13,6 +18,7 @@ type Listener<K extends EventKey> = (payload: EventMap[K]) => void;
 export class EventEmitter {
   private listeners: { [K in EventKey]: Set<Listener<K>> } = {
     update: new Set(),
+    loadModel: new Set(),
   };
 
   on<K extends EventKey>(event: K, listener: Listener<K>): () => void {
