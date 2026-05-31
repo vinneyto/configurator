@@ -16,7 +16,6 @@ export const createModelCenteringModule: AppModule = (facade) => {
 
     box.getCenter(center);
     facade.modelRoot.position.sub(center);
-    facade.modelRoot.updateWorldMatrix(true, true);
   });
 
   return () => {
