@@ -11,10 +11,6 @@ function throwIfAborted(signal?: AbortSignal): void {
   }
 }
 
-function isAbortError(error: unknown): boolean {
-  return error instanceof DOMException && error.name === 'AbortError';
-}
-
 async function loadAndTransform(signal?: AbortSignal) {
   throwIfAborted(signal);
 
@@ -29,27 +25,17 @@ async function loadAndTransform(signal?: AbortSignal) {
 }
 
 export const createModelLoaderModule: AppModule = (facade) => {
-  let isDisposed = false;
   const abortController = new AbortController();
 
   loadAndTransform(abortController.signal)
     .then((glb) => {
-      if (isDisposed) {
-        return;
-      }
-
       facade.events.emit('loadModel', { buffer: glb.buffer });
     })
     .catch((error) => {
-      if (isDisposed || isAbortError(error)) {
-        return;
-      }
-
       console.error(`Failed to load ${BATHROOM_MODEL_URL}`, error);
     });
 
   return () => {
-    isDisposed = true;
     abortController.abort();
   };
 };
