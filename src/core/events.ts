@@ -9,9 +9,14 @@ export type LoadModelEvent = {
   buffer: ArrayBuffer;
 };
 
+export type ModelAddedEvent = {
+  at: number;
+};
+
 export type EventMap = {
   update: UpdateEvent;
   loadModel: LoadModelEvent;
+  modelAdded: ModelAddedEvent;
 };
 
 type EventKey = keyof EventMap;
