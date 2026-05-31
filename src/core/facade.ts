@@ -1,4 +1,4 @@
-import { Color, PerspectiveCamera, Scene, Timer, WebGLRenderer } from 'three';
+import { Color, Group, PerspectiveCamera, Scene, Timer, WebGLRenderer } from 'three';
 import { createEventBus, type EventBus } from './events';
 
 export class AppFacade {
@@ -6,6 +6,7 @@ export class AppFacade {
   readonly camera: PerspectiveCamera;
   readonly renderer: WebGLRenderer;
   readonly events: EventBus;
+  modelRoot: Group;
 
   private readonly timer: Timer;
   private isRunning = false;
@@ -24,6 +25,9 @@ export class AppFacade {
     container.appendChild(this.renderer.domElement);
 
     this.events = createEventBus();
+    this.modelRoot = new Group();
+    this.scene.add(this.modelRoot);
+
     this.timer = new Timer();
     this.timer.connect(document);
   }

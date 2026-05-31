@@ -1,21 +1,17 @@
-import { Group } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { AppModule } from './types';
 
 export const createModelParserModule: AppModule = (facade) => {
   const loader = new GLTFLoader();
-  let loadedRoot: Group | null = null;
 
   const unsubscribeLoadModel = facade.events.on('loadModel', async (event) => {
     try {
       const gltf = await loader.parseAsync(event.buffer, '');
 
-      if (loadedRoot) {
-        facade.scene.remove(loadedRoot);
-      }
+      facade.scene.remove(facade.modelRoot);
+      facade.modelRoot = gltf.scene;
+      facade.scene.add(facade.modelRoot);
 
-      loadedRoot = gltf.scene;
-      facade.scene.add(loadedRoot);
       facade.events.emit('modelAdded', { at: performance.now() });
     } catch (error) {
       console.error('Failed to parse loaded model buffer', error);
@@ -24,10 +20,6 @@ export const createModelParserModule: AppModule = (facade) => {
 
   return () => {
     unsubscribeLoadModel();
-
-    if (loadedRoot) {
-      facade.scene.remove(loadedRoot);
-      loadedRoot = null;
-    }
+    facade.scene.remove(facade.modelRoot);
   };
 };
