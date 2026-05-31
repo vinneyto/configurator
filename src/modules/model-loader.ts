@@ -15,13 +15,25 @@ async function loadAndTransform() {
 }
 
 export const createModelLoaderModule: AppModule = (facade) => {
+  let isDisposed = false;
+
   loadAndTransform()
     .then((glb) => {
+      if (isDisposed) {
+        return;
+      }
+
       facade.events.emit('loadModel', { buffer: glb.buffer });
     })
     .catch((error) => {
+      if (isDisposed) {
+        return;
+      }
+
       console.error(`Failed to load ${BATHROOM_MODEL_URL}`, error);
     });
 
-  return () => {};
+  return () => {
+    isDisposed = true;
+  };
 };
