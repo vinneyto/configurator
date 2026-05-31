@@ -6,6 +6,7 @@ import { createModelParserModule } from './modules/model-parser';
 import { createOrbitControlsModule } from './modules/orbit-controls';
 import { createViewportResizeModule } from './modules/viewport-resize';
 import { createModelLoaderModule } from './modules/model-loader';
+import { createSsgiPassModule } from './modules/ssgi-pass';
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
 
@@ -19,12 +20,13 @@ const teardownModules = [
   createViewportResizeModule(facade),
   createBasicLightingModule(facade),
   createOrbitControlsModule(facade),
+  createSsgiPassModule(facade),
   createModelLoaderModule(facade),
   createModelParserModule(facade),
   createModelCenteringModule(facade),
 ];
 
-facade.start();
+void facade.start();
 
 window.addEventListener('beforeunload', () => {
   teardownModules.forEach((teardown) => teardown());
