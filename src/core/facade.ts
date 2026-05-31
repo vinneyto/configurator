@@ -1,11 +1,11 @@
 import { Color, PerspectiveCamera, Scene, Timer, WebGLRenderer } from 'three';
-import { EventEmitter } from './events';
+import { createEventBus, type EventBus } from './events';
 
 export class AppFacade {
   readonly scene: Scene;
   readonly camera: PerspectiveCamera;
   readonly renderer: WebGLRenderer;
-  readonly events: EventEmitter;
+  readonly events: EventBus;
 
   private readonly timer: Timer;
   private isRunning = false;
@@ -23,7 +23,7 @@ export class AppFacade {
 
     container.appendChild(this.renderer.domElement);
 
-    this.events = new EventEmitter();
+    this.events = createEventBus();
     this.timer = new Timer();
     this.timer.connect(document);
   }
