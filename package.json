@@ -27,6 +27,7 @@
     "@gltf-transform/functions": "^4.3.0",
     "@types/three": "^0.184.1",
     "mitt": "^3.0.1",
+    "stats.js": "^0.17.0",
     "three": "^0.184.0"
   }
 }
