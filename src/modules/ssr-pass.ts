@@ -12,6 +12,7 @@ export const createSsrPassModule: AppModule = (facade) => {
   const previousNode = facade.renderPipeline.outputNode;
   const previousColorNode = previousNode as unknown as ColorLikeNode;
 
+  const scenePassColor = facade.scenePass.getTextureNode('output');
   const scenePassDepth = facade.scenePass.getTextureNode('depth');
   const scenePassNormal = facade.scenePass.getTextureNode('normal');
   const scenePassMetalRough = facade.scenePass.getTextureNode('metalrough');
@@ -25,7 +26,7 @@ export const createSsrPassModule: AppModule = (facade) => {
   const sceneNormal = sample((uv) => colorToDirection(scenePassNormal.sample(uv)));
 
   const ssrPass = ssr(
-    previousNode,
+    scenePassColor,
     scenePassDepth,
     sceneNormal,
     scenePassMetalRough.r,

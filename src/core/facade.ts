@@ -33,7 +33,10 @@ export class AppFacade {
     this.camera = new PerspectiveCamera(60, 1, 0.1, 20);
     this.camera.position.set(0, 0, 5);
 
-    this.renderer = new WebGPURenderer({ antialias: false });
+    this.renderer = new WebGPURenderer({
+      antialias: false,
+      requiredLimits: { maxColorAttachmentBytesPerSample: 128 },
+    });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(container.clientWidth, container.clientHeight);
 
