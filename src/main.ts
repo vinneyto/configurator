@@ -1,6 +1,6 @@
 import './style.css';
 import { AppFacade } from './core/facade';
-// import { createBasicLightingModule } from './modules/basic-lighting';
+import { createBasicLightingModule } from './modules/basic-lighting';
 import { createModelCenteringModule } from './modules/model-centering';
 import { createModelParserModule } from './modules/model-parser';
 import { createOrbitControlsModule } from './modules/orbit-controls';
@@ -28,8 +28,8 @@ const sceneModules: AppModule[] = [
   createModelParserModule,
   createModelCenteringModule,
   createModelZFightFixModule,
-  // createBasicLightingModule,
-  createIBLLightingModule,
+  createBasicLightingModule,
+  // createIBLLightingModule,
 ];
 
 const postprocessingModules: AppModule[] = [
