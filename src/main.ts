@@ -4,6 +4,7 @@ import { createBasicLightingModule } from './modules/basic-lighting';
 import { createModelCenteringModule } from './modules/model-centering';
 import { createModelParserModule } from './modules/model-parser';
 import { createOrbitControlsModule } from './modules/orbit-controls';
+import { createSceneRelaxationModule } from './modules/scene-relaxation';
 import { createViewportResizeModule } from './modules/viewport-resize';
 import { createModelLoaderModule } from './modules/model-loader';
 import { createSsgiPassModule } from './modules/ssgi-pass';
@@ -25,6 +26,7 @@ const facade = new AppFacade(appRoot);
 const sceneModules: AppModule[] = [
   createViewportResizeModule,
   createOrbitControlsModule,
+  createSceneRelaxationModule,
   createModelLoaderModule,
   createModelParserModule,
   createModelCenteringModule,

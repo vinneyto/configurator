@@ -31,11 +31,21 @@ export type RendererInitializedEvent = {
   at: number;
 };
 
+export type SceneRelaxationChangedEvent = {
+  relaxed: boolean;
+};
+
+export type OrbitInteractionChangedEvent = {
+  active: boolean;
+};
+
 export type EventMap = {
   update: UpdateEvent;
   loadModel: LoadModelEvent;
   modelAdded: ModelAddedEvent;
   rendererInitialized: RendererInitializedEvent;
+  sceneRelaxationChanged: SceneRelaxationChangedEvent;
+  orbitInteractionChanged: OrbitInteractionChangedEvent;
 };
 
 type EventKey = keyof EventMap;

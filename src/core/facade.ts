@@ -22,6 +22,7 @@ export class AppFacade {
   readonly scenePass: ReturnType<typeof pass>;
   readonly events: EventBus;
   modelRoot: Group;
+  sceneRelaxed = false;
 
   private readonly timer: Timer;
   private isRunning = false;
@@ -85,6 +86,13 @@ export class AppFacade {
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
+  }
+
+  setSceneRelaxed(relaxed: boolean): void {
+    if (this.sceneRelaxed === relaxed) return;
+
+    this.sceneRelaxed = relaxed;
+    this.events.emit('sceneRelaxationChanged', { relaxed });
   }
 
   private tick = (time: number): void => {

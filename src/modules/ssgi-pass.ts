@@ -35,7 +35,16 @@ export const createSsgiPassModule: AppModule = (facade) => {
   facade.renderPipeline.outputNode = ssgiCompositePass;
   facade.renderPipeline.needsUpdate = true;
 
+  const unsubscribeSceneRelaxationChanged = facade.events.on(
+    'sceneRelaxationChanged',
+    ({ relaxed }) => {
+      giPass.sliceCount.value = relaxed ? 2 : 1;
+      giPass.stepCount.value = relaxed ? 8 : 1;
+    }
+  );
+
   return () => {
+    unsubscribeSceneRelaxationChanged();
     giPass.dispose();
     facade.renderPipeline.outputNode = previousNode;
     facade.renderPipeline.needsUpdate = true;
