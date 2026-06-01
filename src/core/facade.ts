@@ -1,6 +1,17 @@
-import { Color, Group, PerspectiveCamera, Scene, Timer } from 'three';
+import { ACESFilmicToneMapping, Color, Group, PerspectiveCamera, Scene, Timer } from 'three';
 import { RenderPipeline, WebGPURenderer } from 'three/webgpu';
-import { diffuseColor, directionToColor, mrt, normalView, output, pass, velocity } from 'three/tsl';
+import {
+  diffuseColor,
+  directionToColor,
+  metalness,
+  mrt,
+  normalView,
+  output,
+  pass,
+  roughness,
+  vec2,
+  velocity,
+} from 'three/tsl';
 import { createEventBus, type EventBus } from './events';
 
 export class AppFacade {
@@ -22,7 +33,11 @@ export class AppFacade {
     this.camera = new PerspectiveCamera(60, 1, 0.1, 20);
     this.camera.position.set(0, 0, 5);
 
-    this.renderer = new WebGPURenderer({ antialias: false });
+    this.renderer = new WebGPURenderer({
+      antialias: false,
+      requiredLimits: { maxColorAttachmentBytesPerSample: 128 },
+    });
+    this.renderer.toneMapping = ACESFilmicToneMapping;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(container.clientWidth, container.clientHeight);
 
@@ -34,6 +49,7 @@ export class AppFacade {
         output,
         diffuseColor,
         normal: directionToColor(normalView),
+        metalrough: vec2(metalness, roughness),
         velocity,
       })
     );

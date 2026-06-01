@@ -7,6 +7,8 @@ import { createOrbitControlsModule } from './modules/orbit-controls';
 import { createViewportResizeModule } from './modules/viewport-resize';
 import { createModelLoaderModule } from './modules/model-loader';
 import { createSsgiPassModule } from './modules/ssgi-pass';
+import { createSsrPassModule } from './modules/ssr-pass';
+import { createTaaPassModule } from './modules/taa-pass';
 import { createModelZFightFixModule } from './modules/model-zfight-fix';
 import { createIBLLightingModule } from './modules/ibl-lighting';
 import type { AppModule } from './modules/types';
@@ -30,16 +32,22 @@ const sceneModules: AppModule[] = [
   createIBLLightingModule,
 ];
 
-const postprocessingModules: AppModule[] = [createSsgiPassModule];
+const postprocessingModules: AppModule[] = [
+  createSsgiPassModule,
+  createSsrPassModule,
+  createTaaPassModule,
+];
 
 const instantiateModules = (modules: AppModule[]): Array<() => void> =>
   modules.map((m) => m(facade));
 
-const teardownModules = instantiateModules([...sceneModules, ...postprocessingModules]);
+const sceneTeardowns = instantiateModules(sceneModules);
+const postprocessingTeardowns = instantiateModules(postprocessingModules);
 
 void facade.start();
 
 window.addEventListener('beforeunload', () => {
-  teardownModules.forEach((teardown) => teardown());
+  [...postprocessingTeardowns].reverse().forEach((teardown) => teardown());
+  [...sceneTeardowns].reverse().forEach((teardown) => teardown());
   facade.stop();
 });
