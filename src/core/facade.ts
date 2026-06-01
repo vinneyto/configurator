@@ -1,11 +1,14 @@
 import { Color, Group, PerspectiveCamera, Scene, Timer } from 'three';
+import { RenderPipeline, WebGPURenderer } from 'three/webgpu';
+import { diffuseColor, directionToColor, mrt, normalView, output, pass, velocity } from 'three/tsl';
 import { createEventBus, type EventBus } from './events';
-import { WebGPURenderer } from 'three/webgpu';
 
 export class AppFacade {
   readonly scene: Scene;
   readonly camera: PerspectiveCamera;
   readonly renderer: WebGPURenderer;
+  readonly renderPipeline: RenderPipeline;
+  readonly scenePass: ReturnType<typeof pass>;
   readonly events: EventBus;
   modelRoot: Group;
 
@@ -16,14 +19,27 @@ export class AppFacade {
     this.scene = new Scene();
     this.scene.background = new Color(0x10131a);
 
-    this.camera = new PerspectiveCamera(60, 1, 0.1, 1000);
+    this.camera = new PerspectiveCamera(60, 1, 0.1, 20);
     this.camera.position.set(0, 0, 5);
 
-    this.renderer = new WebGPURenderer({ antialias: true });
+    this.renderer = new WebGPURenderer({ antialias: false });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(container.clientWidth, container.clientHeight);
 
     container.appendChild(this.renderer.domElement);
+
+    this.scenePass = pass(this.scene, this.camera);
+    this.scenePass.setMRT(
+      mrt({
+        output,
+        diffuseColor,
+        normal: directionToColor(normalView),
+        velocity,
+      })
+    );
+
+    this.renderPipeline = new RenderPipeline(this.renderer);
+    this.renderPipeline.outputNode = this.scenePass.getTextureNode('output');
 
     this.events = createEventBus();
     this.modelRoot = new Group();
@@ -33,8 +49,10 @@ export class AppFacade {
     this.timer.connect(document);
   }
 
-  start(): void {
+  async start(): Promise<void> {
     if (this.isRunning) return;
+
+    await this.renderer.init();
 
     this.isRunning = true;
     this.renderer.setAnimationLoop(this.tick);
@@ -43,6 +61,7 @@ export class AppFacade {
   stop(): void {
     this.isRunning = false;
     this.renderer.setAnimationLoop(null);
+    this.renderPipeline.dispose();
   }
 
   resize(width: number, height: number): void {
@@ -58,6 +77,6 @@ export class AppFacade {
     const elapsedSeconds = this.timer.getElapsed();
 
     this.events.emit('update', { deltaSeconds, elapsedSeconds });
-    this.renderer.render(this.scene, this.camera);
+    this.renderPipeline.render();
   };
 }
