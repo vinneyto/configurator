@@ -1,4 +1,4 @@
-import { Color, Group, PerspectiveCamera, Scene, Timer } from 'three';
+import { ACESFilmicToneMapping, Color, Group, PerspectiveCamera, Scene, Timer } from 'three';
 import { RenderPipeline, WebGPURenderer } from 'three/webgpu';
 import {
   diffuseColor,
@@ -37,6 +37,7 @@ export class AppFacade {
       antialias: false,
       requiredLimits: { maxColorAttachmentBytesPerSample: 128 },
     });
+    this.renderer.toneMapping = ACESFilmicToneMapping;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(container.clientWidth, container.clientHeight);
 

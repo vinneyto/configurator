@@ -1,4 +1,4 @@
-import { UnsignedByteType } from 'three';
+import { FrontSide, Mesh, MeshPhysicalMaterial, UnsignedByteType } from 'three';
 import { ssr } from 'three/addons/tsl/display/SSRNode.js';
 import { add, colorToDirection, sample, vec4 } from 'three/tsl';
 import type { AppModule } from './types';
@@ -34,6 +34,8 @@ export const createSsrPassModule: AppModule = (facade) => {
     facade.camera
   );
 
+  ssrPass.maxDistance.value = 10;
+
   const ssrCompositePass = vec4(
     add(previousColorNode.rgb as never, ssrPass.rgb as never),
     previousColorNode.a as never
@@ -42,7 +44,19 @@ export const createSsrPassModule: AppModule = (facade) => {
   facade.renderPipeline.outputNode = ssrCompositePass;
   facade.renderPipeline.needsUpdate = true;
 
+  const unsubscribeModelAdded = facade.events.on('modelAdded', () => {
+    facade.modelRoot.traverse((obj) => {
+      if (obj instanceof Mesh) {
+        obj.material.side = FrontSide;
+        if (obj.material instanceof MeshPhysicalMaterial) {
+          obj.material.metalness = 0.2;
+        }
+      }
+    });
+  });
+
   return () => {
+    unsubscribeModelAdded();
     ssrPass.dispose();
     facade.renderPipeline.outputNode = previousNode;
     facade.renderPipeline.needsUpdate = true;
