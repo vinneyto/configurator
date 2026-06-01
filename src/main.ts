@@ -7,6 +7,7 @@ import { createOrbitControlsModule } from './modules/orbit-controls';
 import { createViewportResizeModule } from './modules/viewport-resize';
 import { createModelLoaderModule } from './modules/model-loader';
 import { createSsgiPassModule } from './modules/ssgi-pass';
+import { createSsaoPassModule } from './modules/ssao-pass';
 import { createSsrPassModule } from './modules/ssr-pass';
 import { createTaaPassModule } from './modules/taa-pass';
 import { createModelZFightFixModule } from './modules/model-zfight-fix';
@@ -35,6 +36,7 @@ const sceneModules: AppModule[] = [
 
 const postprocessingModules: AppModule[] = [
   createSsgiPassModule,
+  createSsaoPassModule,
   createSsrPassModule,
   createTaaPassModule,
 ];
