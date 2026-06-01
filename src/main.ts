@@ -7,6 +7,7 @@ import { createOrbitControlsModule } from './modules/orbit-controls';
 import { createSceneRelaxationModule } from './modules/scene-relaxation';
 import { createViewportResizeModule } from './modules/viewport-resize';
 import { createModelLoaderModule } from './modules/model-loader';
+import { createModelLoadingSpinnerModule } from './modules/model-loading-spinner';
 import { createSsgiPassModule } from './modules/ssgi-pass';
 import { createSsaoPassModule } from './modules/ssao-pass';
 import { createSsrPassModule } from './modules/ssr-pass';
@@ -27,6 +28,7 @@ const sceneModules: AppModule[] = [
   createViewportResizeModule,
   createOrbitControlsModule,
   createSceneRelaxationModule,
+  createModelLoadingSpinnerModule,
   createModelLoaderModule,
   createModelParserModule,
   createModelCenteringModule,
