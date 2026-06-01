@@ -20,6 +20,7 @@ export const createSsgiPassModule: AppModule = (facade) => {
   const sceneNormal = sample((uv) => colorToDirection(scenePassNormal.sample(uv)));
 
   const giPass = ssgi(scenePassColor, scenePassDepth, sceneNormal, facade.camera);
+
   giPass.sliceCount.value = 2;
   giPass.stepCount.value = 8;
 
