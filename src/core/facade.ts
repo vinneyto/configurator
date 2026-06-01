@@ -95,5 +95,6 @@ export class AppFacade {
 
     this.events.emit('update', { deltaSeconds, elapsedSeconds });
     this.renderPipeline.render();
+    this.events.emit('postRender', { at: performance.now() });
   };
 }

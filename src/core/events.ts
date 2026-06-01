@@ -31,11 +31,16 @@ export type RendererInitializedEvent = {
   at: number;
 };
 
+export type PostRenderEvent = {
+  at: number;
+};
+
 export type EventMap = {
   update: UpdateEvent;
   loadModel: LoadModelEvent;
   modelAdded: ModelAddedEvent;
   rendererInitialized: RendererInitializedEvent;
+  postRender: PostRenderEvent;
 };
 
 type EventKey = keyof EventMap;
