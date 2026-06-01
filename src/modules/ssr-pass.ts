@@ -23,7 +23,8 @@ export const createSsrPassModule: AppModule = (facade) => {
     scenePassDepth,
     sceneNormal,
     scenePassMetalRough.r,
-    scenePassMetalRough.g
+    scenePassMetalRough.g,
+    facade.camera
   );
 
   const ssrCompositePass = vec4(add(previousNode.rgb, ssrPass.rgb), previousNode.a);
