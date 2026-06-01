@@ -10,7 +10,7 @@ import { createSsgiPassModule } from './modules/ssgi-pass';
 import { createSsrPassModule } from './modules/ssr-pass';
 import { createTaaPassModule } from './modules/taa-pass';
 import { createModelZFightFixModule } from './modules/model-zfight-fix';
-import { createIBLLightingModule } from './modules/ibl-lighting';
+import { createToneMappingModule } from './modules/tone-mapping';
 import type { AppModule } from './modules/types';
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
@@ -29,6 +29,7 @@ const sceneModules: AppModule[] = [
   createModelCenteringModule,
   createModelZFightFixModule,
   createBasicLightingModule,
+  createToneMappingModule,
   // createIBLLightingModule,
 ];
 
