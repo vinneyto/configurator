@@ -34,8 +34,6 @@ export const createSsrPassModule: AppModule = (facade) => {
     facade.camera
   );
 
-  ssrPass.maxDistance.value = 10;
-
   const ssrCompositePass = vec4(
     add(previousColorNode.rgb as never, ssrPass.rgb as never),
     previousColorNode.a as never
