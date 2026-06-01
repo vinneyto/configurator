@@ -1,12 +1,12 @@
 import { PMREMGenerator } from 'three/webgpu';
-import { StudioRoomEnvironment } from '../environments/studio-room-environment';
+import { CustomStudioEnvironment } from '../environments/custom-studio-environment';
 import type { AppModule } from './types';
 
 export const createIBLLightingModule: AppModule = (facade) => {
-  const environment = new StudioRoomEnvironment({
+  const environment = new CustomStudioEnvironment({
     lightColor: 0xffe6f2,
     emissiveColor: 0xffeef8,
-    pointLightIntensityMultiplier: 1,
+    pointLightIntensity: 900,
     emissiveIntensityMultiplier: 1,
   });
 
