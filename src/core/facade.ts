@@ -53,6 +53,7 @@ export class AppFacade {
     if (this.isRunning) return;
 
     await this.renderer.init();
+    this.events.emit('rendererInitialized', { at: performance.now() });
 
     this.isRunning = true;
     this.renderer.setAnimationLoop(this.tick);
