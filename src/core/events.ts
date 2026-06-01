@@ -31,11 +31,22 @@ export type RendererInitializedEvent = {
   at: number;
 };
 
+export type RendererResizedEvent = {
+  width: number;
+  height: number;
+};
+
+export type SceneRelaxationChangedEvent = {
+  relaxed: boolean;
+};
+
 export type EventMap = {
   update: UpdateEvent;
   loadModel: LoadModelEvent;
   modelAdded: ModelAddedEvent;
   rendererInitialized: RendererInitializedEvent;
+  rendererResized: RendererResizedEvent;
+  sceneRelaxationChanged: SceneRelaxationChangedEvent;
 };
 
 type EventKey = keyof EventMap;

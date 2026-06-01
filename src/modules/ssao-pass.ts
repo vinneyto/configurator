@@ -1,5 +1,5 @@
 import { ao } from 'three/addons/tsl/display/GTAONode.js';
-import { colorToDirection, sample, vec3, vec4 } from 'three/tsl';
+import { vec3, vec4 } from 'three/tsl';
 import type { AppModule } from './types';
 
 export const createSsaoPassModule: AppModule = (facade) => {

@@ -32,10 +32,22 @@ export const createSsgiPassModule: AppModule = (facade) => {
     scenePassColor.a
   );
 
-  facade.renderPipeline.outputNode = ssgiCompositePass;
-  facade.renderPipeline.needsUpdate = true;
+  const applyOutput = (useSsgi: boolean) => {
+    facade.renderPipeline.outputNode = useSsgi ? ssgiCompositePass : previousNode;
+    facade.renderPipeline.needsUpdate = true;
+  };
+
+  const unsubscribeSceneRelaxationChanged = facade.events.on(
+    'sceneRelaxationChanged',
+    ({ relaxed }) => {
+      applyOutput(relaxed);
+    }
+  );
+
+  applyOutput(facade.sceneRelaxed);
 
   return () => {
+    unsubscribeSceneRelaxationChanged();
     giPass.dispose();
     facade.renderPipeline.outputNode = previousNode;
     facade.renderPipeline.needsUpdate = true;
