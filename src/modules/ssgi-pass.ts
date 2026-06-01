@@ -4,7 +4,7 @@ import { add, colorToDirection, sample, vec4 } from 'three/tsl';
 import type { AppModule } from './types';
 
 export const createSsgiPassModule: AppModule = (facade) => {
-  const previousNode: any = facade.renderPipeline.outputNode;
+  const previousNode = facade.renderPipeline.outputNode;
 
   const scenePassColor = facade.scenePass.getTextureNode('output');
   const scenePassDiffuse = facade.scenePass.getTextureNode('diffuseColor');
@@ -19,7 +19,7 @@ export const createSsgiPassModule: AppModule = (facade) => {
 
   const sceneNormal = sample((uv) => colorToDirection(scenePassNormal.sample(uv)));
 
-  const giPass: any = ssgi(scenePassColor, scenePassDepth, sceneNormal, facade.camera);
+  const giPass = ssgi(scenePassColor, scenePassDepth, sceneNormal, facade.camera);
   giPass.sliceCount.value = 2;
   giPass.stepCount.value = 8;
 
