@@ -3,14 +3,9 @@ import { ssr } from 'three/addons/tsl/display/SSRNode.js';
 import { add, colorToDirection, sample, vec4 } from 'three/tsl';
 import type { AppModule } from './types';
 
-type ColorLikeNode = {
-  rgb: unknown;
-  a: unknown;
-};
-
 export const createSsrPassModule: AppModule = (facade) => {
   const previousNode = facade.renderPipeline.outputNode;
-  const previousColorNode = previousNode as unknown as ColorLikeNode;
+  const previousColorNode = previousNode as ReturnType<typeof vec4>;
 
   const scenePassColor = facade.scenePass.getTextureNode('output');
   const scenePassDepth = facade.scenePass.getTextureNode('depth');
@@ -34,10 +29,7 @@ export const createSsrPassModule: AppModule = (facade) => {
     facade.camera
   );
 
-  const ssrCompositePass = vec4(
-    add(previousColorNode.rgb as never, ssrPass.rgb as never),
-    previousColorNode.a as never
-  );
+  const ssrCompositePass = vec4(add(previousColorNode.rgb, ssrPass.rgb), previousColorNode.a);
 
   facade.renderPipeline.outputNode = ssrCompositePass;
   facade.renderPipeline.needsUpdate = true;

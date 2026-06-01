@@ -2,7 +2,7 @@ import { traa } from 'three/addons/tsl/display/TRAANode.js';
 import type { AppModule } from './types';
 
 export const createTaaPassModule: AppModule = (facade) => {
-  const previousNode: any = facade.renderPipeline.outputNode;
+  const previousNode = facade.renderPipeline.outputNode;
 
   const scenePassDepth = facade.scenePass.getTextureNode('depth');
   const scenePassVelocity = facade.scenePass.getTextureNode('velocity');
