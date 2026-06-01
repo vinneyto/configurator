@@ -31,11 +31,6 @@ export type RendererInitializedEvent = {
   at: number;
 };
 
-export type RendererResizedEvent = {
-  width: number;
-  height: number;
-};
-
 export type SceneRelaxationChangedEvent = {
   relaxed: boolean;
 };
@@ -49,7 +44,6 @@ export type EventMap = {
   loadModel: LoadModelEvent;
   modelAdded: ModelAddedEvent;
   rendererInitialized: RendererInitializedEvent;
-  rendererResized: RendererResizedEvent;
   sceneRelaxationChanged: SceneRelaxationChangedEvent;
   orbitInteractionChanged: OrbitInteractionChangedEvent;
 };

@@ -86,7 +86,6 @@ export class AppFacade {
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
-    this.events.emit('rendererResized', { width, height });
   }
 
   setSceneRelaxed(relaxed: boolean): void {
