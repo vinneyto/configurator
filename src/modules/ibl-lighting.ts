@@ -4,8 +4,8 @@ import type { AppModule } from './types';
 
 export const createIBLLightingModule: AppModule = (facade) => {
   const environment = new StudioRoomEnvironment({
-    lightColor: 0xfff3e6,
-    emissiveColor: 0xfff8ef,
+    lightColor: 0xffe6f2,
+    emissiveColor: 0xffeef8,
     pointLightIntensityMultiplier: 1,
     emissiveIntensityMultiplier: 1,
   });
