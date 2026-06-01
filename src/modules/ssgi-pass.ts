@@ -20,6 +20,18 @@ export const createSsgiPassModule: AppModule = (facade) => {
   const sceneNormal = sample((uv) => colorToDirection(scenePassNormal.sample(uv)));
 
   const giPass = ssgi(scenePassColor, scenePassDepth, sceneNormal, facade.camera);
+
+  type ResizableNode = {
+    setSize: (width: number, height: number) => void;
+  };
+
+  const halfResGiPass = giPass as unknown as ResizableNode;
+  const baseSetSize = halfResGiPass.setSize.bind(halfResGiPass);
+
+  halfResGiPass.setSize = (width: number, height: number) => {
+    baseSetSize(Math.max(1, Math.round(width * 0.5)), Math.max(1, Math.round(height * 0.5)));
+  };
+
   giPass.sliceCount.value = 2;
   giPass.stepCount.value = 8;
 

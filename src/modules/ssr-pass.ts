@@ -28,6 +28,7 @@ export const createSsrPassModule: AppModule = (facade) => {
     scenePassMetalRough.g,
     facade.camera
   );
+  ssrPass.resolutionScale = 0.5;
 
   const ssrCompositePass = vec4(add(previousColorNode.rgb, ssrPass.rgb), previousColorNode.a);
 
