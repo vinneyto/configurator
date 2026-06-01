@@ -1,4 +1,3 @@
-import { PerspectiveCamera } from 'three';
 import { add, float, mul, sub, vec4 } from 'three/tsl';
 import { pass } from 'three/tsl';
 import { TRANSPARENT_MATERIALS_LAYER } from '../core/layers';
@@ -8,23 +7,20 @@ export const createTransparentPassModule: AppModule = (facade) => {
   const previousNode = facade.renderPipeline.outputNode;
   const previousColorNode = previousNode as ReturnType<typeof vec4>;
 
-  const transparentCamera = new PerspectiveCamera();
-  transparentCamera.layers.disableAll();
-  transparentCamera.layers.enable(TRANSPARENT_MATERIALS_LAYER);
+  const transparentScenePass = pass(facade.scene, facade.camera);
+  transparentScenePass.setLayers(facade.camera.layers);
+  transparentScenePass.opaque = false;
+  transparentScenePass.transparent = true;
 
-  const syncTransparentCamera = () => {
-    transparentCamera.copy(facade.camera, false);
-    transparentCamera.layers.disableAll();
-    transparentCamera.layers.enable(TRANSPARENT_MATERIALS_LAYER);
-    transparentCamera.matrixWorld.copy(facade.camera.matrixWorld);
-    transparentCamera.matrixWorldInverse.copy(facade.camera.matrixWorldInverse);
-    transparentCamera.projectionMatrix.copy(facade.camera.projectionMatrix);
-    transparentCamera.projectionMatrixInverse.copy(facade.camera.projectionMatrixInverse);
-  };
+  const transparentPassLayers = transparentScenePass.getLayers();
 
-  syncTransparentCamera();
+  if (transparentPassLayers === null) {
+    throw new Error('Transparent pass layers are not initialized');
+  }
 
-  const transparentScenePass = pass(facade.scene, transparentCamera);
+  transparentPassLayers.disableAll();
+  transparentPassLayers.enable(TRANSPARENT_MATERIALS_LAYER);
+
   const transparentColorNode = transparentScenePass.getTextureNode('output');
 
   const oneMinusTransparentAlpha = sub(float(1), transparentColorNode.a);
@@ -39,12 +35,7 @@ export const createTransparentPassModule: AppModule = (facade) => {
   facade.renderPipeline.outputNode = compositePass;
   facade.renderPipeline.needsUpdate = true;
 
-  const unsubscribeUpdate = facade.events.on('update', () => {
-    syncTransparentCamera();
-  });
-
   return () => {
-    unsubscribeUpdate();
     transparentScenePass.dispose();
     facade.renderPipeline.outputNode = previousNode;
     facade.renderPipeline.needsUpdate = true;
