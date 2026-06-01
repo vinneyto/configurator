@@ -27,10 +27,15 @@ export type ModelAddedEvent = {
   camera: CameraParams;
 };
 
+export type RendererInitializedEvent = {
+  at: number;
+};
+
 export type EventMap = {
   update: UpdateEvent;
   loadModel: LoadModelEvent;
   modelAdded: ModelAddedEvent;
+  rendererInitialized: RendererInitializedEvent;
 };
 
 type EventKey = keyof EventMap;
