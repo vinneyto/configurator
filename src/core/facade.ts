@@ -1,6 +1,17 @@
 import { Color, Group, PerspectiveCamera, Scene, Timer } from 'three';
 import { RenderPipeline, WebGPURenderer } from 'three/webgpu';
-import { diffuseColor, directionToColor, mrt, normalView, output, pass, velocity } from 'three/tsl';
+import {
+  diffuseColor,
+  directionToColor,
+  metalness,
+  mrt,
+  normalView,
+  output,
+  pass,
+  roughness,
+  vec2,
+  velocity,
+} from 'three/tsl';
 import { createEventBus, type EventBus } from './events';
 
 export class AppFacade {
@@ -34,6 +45,7 @@ export class AppFacade {
         output,
         diffuseColor,
         normal: directionToColor(normalView),
+        metalrough: vec2(metalness, roughness),
         velocity,
       })
     );

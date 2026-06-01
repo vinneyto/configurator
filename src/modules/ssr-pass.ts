@@ -1,0 +1,39 @@
+import { UnsignedByteType } from 'three';
+import { ssr } from 'three/addons/tsl/display/SSRNode.js';
+import { add, colorToDirection, sample, vec4 } from 'three/tsl';
+import type { AppModule } from './types';
+
+export const createSsrPassModule: AppModule = (facade) => {
+  const previousNode: any = facade.renderPipeline.outputNode;
+
+  const scenePassDepth = facade.scenePass.getTextureNode('depth');
+  const scenePassNormal = facade.scenePass.getTextureNode('normal');
+  const scenePassMetalRough = facade.scenePass.getTextureNode('metalrough');
+
+  const normalTexture = facade.scenePass.getTexture('normal');
+  normalTexture.type = UnsignedByteType;
+
+  const metalRoughTexture = facade.scenePass.getTexture('metalrough');
+  metalRoughTexture.type = UnsignedByteType;
+
+  const sceneNormal = sample((uv) => colorToDirection(scenePassNormal.sample(uv)));
+
+  const ssrPass: any = ssr(
+    previousNode,
+    scenePassDepth,
+    sceneNormal,
+    scenePassMetalRough.r,
+    scenePassMetalRough.g
+  );
+
+  const ssrCompositePass = vec4(add(previousNode.rgb, ssrPass.rgb), previousNode.a);
+
+  facade.renderPipeline.outputNode = ssrCompositePass;
+  facade.renderPipeline.needsUpdate = true;
+
+  return () => {
+    ssrPass.dispose();
+    facade.renderPipeline.outputNode = previousNode;
+    facade.renderPipeline.needsUpdate = true;
+  };
+};
