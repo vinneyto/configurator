@@ -1,0 +1,1 @@
+export const TRANSPARENT_MATERIALS_LAYER = 1;
