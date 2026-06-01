@@ -15,9 +15,22 @@ export const createOrbitControlsModule: AppModule = (facade) => {
     controls.update();
   });
 
+  const onStart = () => {
+    facade.events.emit('orbitInteractionChanged', { active: true });
+  };
+
+  const onEnd = () => {
+    facade.events.emit('orbitInteractionChanged', { active: false });
+  };
+
+  controls.addEventListener('start', onStart);
+  controls.addEventListener('end', onEnd);
+
   return () => {
     unsubscribeModelAdded();
     unsubscribeUpdate();
+    controls.removeEventListener('start', onStart);
+    controls.removeEventListener('end', onEnd);
     controls.dispose();
   };
 };

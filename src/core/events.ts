@@ -40,6 +40,10 @@ export type SceneRelaxationChangedEvent = {
   relaxed: boolean;
 };
 
+export type OrbitInteractionChangedEvent = {
+  active: boolean;
+};
+
 export type EventMap = {
   update: UpdateEvent;
   loadModel: LoadModelEvent;
@@ -47,6 +51,7 @@ export type EventMap = {
   rendererInitialized: RendererInitializedEvent;
   rendererResized: RendererResizedEvent;
   sceneRelaxationChanged: SceneRelaxationChangedEvent;
+  orbitInteractionChanged: OrbitInteractionChangedEvent;
 };
 
 type EventKey = keyof EventMap;
