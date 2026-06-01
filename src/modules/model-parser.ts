@@ -3,7 +3,7 @@ import type { CameraParams } from '../core/events';
 import type { AppModule } from './types';
 
 const MODEL_BEST_VIEW_CAMERA_PARAMS: CameraParams = {
-  position: { x: 0.29504003191361994, y: 0.3295496107818005, z: -0.7445457901311194 },
+  position: { x: 0.29504003191361994, y: 0.3295496107818005, z: -0.5445457901311194 },
   target: { x: 0, y: 0, z: 0 },
 };
 
