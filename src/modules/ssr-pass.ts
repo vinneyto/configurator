@@ -1,21 +1,21 @@
 import { FrontSide, Mesh, MeshPhysicalMaterial, UnsignedByteType } from 'three';
 import { ssr } from 'three/addons/tsl/display/SSRNode.js';
 import { add, colorToDirection, sample, vec4 } from 'three/tsl';
-import type { AppModule } from './types';
+import type { ViewportModule } from './types';
 
-export const createSsrPassModule: AppModule = (facade) => {
-  const previousNode = facade.renderPipeline.outputNode;
+export const createSsrPassModule: ViewportModule = (facade, viewport) => {
+  const previousNode = viewport.renderPipeline.outputNode;
   const previousColorNode = previousNode as ReturnType<typeof vec4>;
 
-  const scenePassColor = facade.scenePass.getTextureNode('output');
-  const scenePassDepth = facade.scenePass.getTextureNode('depth');
-  const scenePassNormal = facade.scenePass.getTextureNode('normal');
-  const scenePassMetalRough = facade.scenePass.getTextureNode('metalrough');
+  const scenePassColor = viewport.scenePass.getTextureNode('output');
+  const scenePassDepth = viewport.scenePass.getTextureNode('depth');
+  const scenePassNormal = viewport.scenePass.getTextureNode('normal');
+  const scenePassMetalRough = viewport.scenePass.getTextureNode('metalrough');
 
-  const normalTexture = facade.scenePass.getTexture('normal');
+  const normalTexture = viewport.scenePass.getTexture('normal');
   normalTexture.type = UnsignedByteType;
 
-  const metalRoughTexture = facade.scenePass.getTexture('metalrough');
+  const metalRoughTexture = viewport.scenePass.getTexture('metalrough');
   metalRoughTexture.type = UnsignedByteType;
 
   const sceneNormal = sample((uv) => colorToDirection(scenePassNormal.sample(uv)));
@@ -26,15 +26,15 @@ export const createSsrPassModule: AppModule = (facade) => {
     sceneNormal,
     scenePassMetalRough.r,
     scenePassMetalRough.g,
-    facade.camera
+    viewport.camera
   );
   ssrPass.resolutionScale = 0.5;
   ssrPass.maxDistance.value = 15;
 
   const ssrCompositePass = vec4(add(previousColorNode.rgb, ssrPass.rgb), previousColorNode.a);
 
-  facade.renderPipeline.outputNode = ssrCompositePass;
-  facade.renderPipeline.needsUpdate = true;
+  viewport.renderPipeline.outputNode = ssrCompositePass;
+  viewport.renderPipeline.needsUpdate = true;
 
   const unsubscribeModelAdded = facade.events.on('modelAdded', () => {
     facade.modelRoot.traverse((obj) => {
@@ -50,7 +50,7 @@ export const createSsrPassModule: AppModule = (facade) => {
   return () => {
     unsubscribeModelAdded();
     ssrPass.dispose();
-    facade.renderPipeline.outputNode = previousNode;
-    facade.renderPipeline.needsUpdate = true;
+    viewport.renderPipeline.outputNode = previousNode;
+    viewport.renderPipeline.needsUpdate = true;
   };
 };

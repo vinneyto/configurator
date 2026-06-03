@@ -1,25 +1,25 @@
 import { UnsignedByteType } from 'three';
 import { ssgi } from 'three/addons/tsl/display/SSGINode.js';
 import { add, colorToDirection, sample, vec4 } from 'three/tsl';
-import type { AppModule } from './types';
+import type { ViewportModule } from './types';
 
-export const createSsgiPassModule: AppModule = (facade) => {
-  const previousNode = facade.renderPipeline.outputNode;
+export const createSsgiPassModule: ViewportModule = (facade, viewport) => {
+  const previousNode = viewport.renderPipeline.outputNode;
 
-  const scenePassColor = facade.scenePass.getTextureNode('output');
-  const scenePassDiffuse = facade.scenePass.getTextureNode('diffuseColor');
-  const scenePassDepth = facade.scenePass.getTextureNode('depth');
-  const scenePassNormal = facade.scenePass.getTextureNode('normal');
+  const scenePassColor = viewport.scenePass.getTextureNode('output');
+  const scenePassDiffuse = viewport.scenePass.getTextureNode('diffuseColor');
+  const scenePassDepth = viewport.scenePass.getTextureNode('depth');
+  const scenePassNormal = viewport.scenePass.getTextureNode('normal');
 
-  const diffuseTexture = facade.scenePass.getTexture('diffuseColor');
+  const diffuseTexture = viewport.scenePass.getTexture('diffuseColor');
   diffuseTexture.type = UnsignedByteType;
 
-  const normalTexture = facade.scenePass.getTexture('normal');
+  const normalTexture = viewport.scenePass.getTexture('normal');
   normalTexture.type = UnsignedByteType;
 
   const sceneNormal = sample((uv) => colorToDirection(scenePassNormal.sample(uv)));
 
-  const giPass = ssgi(scenePassColor, scenePassDepth, sceneNormal, facade.camera);
+  const giPass = ssgi(scenePassColor, scenePassDepth, sceneNormal, viewport.camera);
 
   giPass.sliceCount.value = 2;
   giPass.stepCount.value = 8;
@@ -32,8 +32,8 @@ export const createSsgiPassModule: AppModule = (facade) => {
     scenePassColor.a
   );
 
-  facade.renderPipeline.outputNode = ssgiCompositePass;
-  facade.renderPipeline.needsUpdate = true;
+  viewport.renderPipeline.outputNode = ssgiCompositePass;
+  viewport.renderPipeline.needsUpdate = true;
 
   const unsubscribeSceneRelaxationChanged = facade.events.on(
     'sceneRelaxationChanged',
@@ -46,7 +46,7 @@ export const createSsgiPassModule: AppModule = (facade) => {
   return () => {
     unsubscribeSceneRelaxationChanged();
     giPass.dispose();
-    facade.renderPipeline.outputNode = previousNode;
-    facade.renderPipeline.needsUpdate = true;
+    viewport.renderPipeline.outputNode = previousNode;
+    viewport.renderPipeline.needsUpdate = true;
   };
 };

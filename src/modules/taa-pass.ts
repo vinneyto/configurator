@@ -1,19 +1,19 @@
 import { traa } from 'three/addons/tsl/display/TRAANode.js';
-import type { AppModule } from './types';
+import type { ViewportModule } from './types';
 
-export const createTaaPassModule: AppModule = (facade) => {
-  const previousNode = facade.renderPipeline.outputNode;
+export const createTaaPassModule: ViewportModule = (_facade, viewport) => {
+  const previousNode = viewport.renderPipeline.outputNode;
 
-  const scenePassDepth = facade.scenePass.getTextureNode('depth');
-  const scenePassVelocity = facade.scenePass.getTextureNode('velocity');
+  const scenePassDepth = viewport.scenePass.getTextureNode('depth');
+  const scenePassVelocity = viewport.scenePass.getTextureNode('velocity');
 
-  const traaPass = traa(previousNode, scenePassDepth, scenePassVelocity, facade.camera);
+  const traaPass = traa(previousNode, scenePassDepth, scenePassVelocity, viewport.camera);
 
-  facade.renderPipeline.outputNode = traaPass;
-  facade.renderPipeline.needsUpdate = true;
+  viewport.renderPipeline.outputNode = traaPass;
+  viewport.renderPipeline.needsUpdate = true;
 
   return () => {
-    facade.renderPipeline.outputNode = previousNode;
-    facade.renderPipeline.needsUpdate = true;
+    viewport.renderPipeline.outputNode = previousNode;
+    viewport.renderPipeline.needsUpdate = true;
   };
 };
