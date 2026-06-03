@@ -3,7 +3,7 @@ import { ssgi } from 'three/addons/tsl/display/SSGINode.js';
 import { add, colorToDirection, sample, vec4 } from 'three/tsl';
 import type { ViewportModule } from './types';
 
-export const createSsgiPassModule: ViewportModule = (_facade, viewport) => {
+export const createSsgiPassModule: ViewportModule = (facade, viewport) => {
   const previousNode = viewport.renderPipeline.outputNode;
 
   const scenePassColor = viewport.scenePass.getTextureNode('output');
@@ -35,7 +35,7 @@ export const createSsgiPassModule: ViewportModule = (_facade, viewport) => {
   viewport.renderPipeline.outputNode = ssgiCompositePass;
   viewport.renderPipeline.needsUpdate = true;
 
-  const unsubscribeSceneRelaxationChanged = _facade.events.on(
+  const unsubscribeSceneRelaxationChanged = facade.events.on(
     'sceneRelaxationChanged',
     ({ relaxed }) => {
       giPass.sliceCount.value = relaxed ? 2 : 1;

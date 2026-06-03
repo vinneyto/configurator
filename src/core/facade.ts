@@ -1,9 +1,9 @@
 import { ACESFilmicToneMapping, Color, Group, PerspectiveCamera, Scene, Timer } from 'three';
-import { WebGPURenderer } from 'three/webgpu';
+import { screenUV, step, vec4 } from 'three/tsl';
+import { RenderPipeline, WebGPURenderer } from 'three/webgpu';
 import { createEventBus, type EventBus } from './events';
 import {
   createViewportContext,
-  type PixelViewportBounds,
   type RelativeViewportBounds,
   type ViewportContext,
   type ViewportDefinition,
@@ -20,6 +20,7 @@ export class AppFacade {
 
   private readonly timer: Timer;
   private readonly viewportById: Map<string, ViewportContext>;
+  private readonly screenRenderPipeline: RenderPipeline;
   private canvasWidth = 1;
   private canvasHeight = 1;
   private isRunning = false;
@@ -38,7 +39,10 @@ export class AppFacade {
     });
     this.renderer.toneMapping = ACESFilmicToneMapping;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.setSize(container.clientWidth, container.clientHeight);
+
+    this.canvasWidth = Math.max(1, Math.round(container.clientWidth));
+    this.canvasHeight = Math.max(1, Math.round(container.clientHeight));
+    this.renderer.setSize(this.canvasWidth, this.canvasHeight);
 
     container.appendChild(this.renderer.domElement);
 
@@ -51,6 +55,11 @@ export class AppFacade {
     );
     this.primaryViewport = this.viewports[0];
     this.viewportById = new Map(this.viewports.map((viewport) => [viewport.id, viewport]));
+    this.screenRenderPipeline = new RenderPipeline(this.renderer, this.composeViewportOutputs());
+
+    this.viewports.forEach((viewport) => {
+      this.updateViewportCameraAspect(viewport);
+    });
 
     this.timer = new Timer();
     this.timer.connect(document);
@@ -83,6 +92,7 @@ export class AppFacade {
   stop(): void {
     this.isRunning = false;
     this.renderer.setAnimationLoop(null);
+    this.screenRenderPipeline.dispose();
     this.viewports.forEach((viewport) => {
       viewport.renderPipeline.dispose();
     });
@@ -115,17 +125,18 @@ export class AppFacade {
     this.events.emit('update', { deltaSeconds, elapsedSeconds });
     this.syncSecondaryViewportsFromPrimary();
 
-    this.renderer.setScissorTest(true);
-
-    this.viewports.forEach((viewport) => {
-      const bounds = this.resolvePixelViewportBounds(viewport.bounds);
-      this.updateViewportCameraAspect(viewport, bounds);
-      this.renderer.setViewport(bounds.left, bounds.bottom, bounds.width, bounds.height);
-      this.renderer.setScissor(bounds.left, bounds.bottom, bounds.width, bounds.height);
-      viewport.renderPipeline.render();
-    });
-
+    this.renderer.setRenderTarget(null);
     this.renderer.setScissorTest(false);
+    this.renderer.setViewport(0, 0, this.canvasWidth, this.canvasHeight);
+
+    const previousAutoClear = this.renderer.autoClear;
+    this.renderer.autoClear = true;
+    this.renderer.clear();
+    this.renderer.autoClear = false;
+
+    this.screenRenderPipeline.render();
+
+    this.renderer.autoClear = previousAutoClear;
   };
 
   private syncSecondaryViewportsFromPrimary(): void {
@@ -152,11 +163,8 @@ export class AppFacade {
     });
   }
 
-  private updateViewportCameraAspect(
-    viewport: ViewportContext,
-    pixelBounds = this.resolvePixelViewportBounds(viewport.bounds)
-  ): void {
-    const aspect = Math.max(1, pixelBounds.width) / Math.max(1, pixelBounds.height);
+  private updateViewportCameraAspect(viewport: ViewportContext): void {
+    const aspect = this.canvasWidth / this.canvasHeight;
 
     if (viewport.camera.aspect !== aspect) {
       viewport.camera.aspect = aspect;
@@ -164,18 +172,29 @@ export class AppFacade {
     }
   }
 
-  private resolvePixelViewportBounds(bounds: RelativeViewportBounds): PixelViewportBounds {
-    const left = Math.round(bounds.left * this.canvasWidth);
-    const top = Math.round(bounds.top * this.canvasHeight);
-    const width = Math.max(1, Math.round(bounds.width * this.canvasWidth));
-    const height = Math.max(1, Math.round(bounds.height * this.canvasHeight));
-    const bottom = this.canvasHeight - top - height;
+  private composeViewportOutputs() {
+    const [leftViewport, rightViewport] = this.viewports;
 
-    return {
-      left,
-      bottom,
-      width,
-      height,
-    };
+    if (!leftViewport || !rightViewport) {
+      throw new Error('Split viewport demo requires exactly two viewports');
+    }
+
+    const leftOutputNode = leftViewport.renderPipeline.outputNode as ReturnType<typeof vec4>;
+    const rightOutputNode = rightViewport.renderPipeline.outputNode as ReturnType<typeof vec4>;
+    const leftMask = this.createViewportMaskNode(leftViewport.bounds);
+    const rightMask = this.createViewportMaskNode(rightViewport.bounds);
+
+    return leftOutputNode.mul(leftMask).add(rightOutputNode.mul(rightMask));
+  }
+
+  private createViewportMaskNode(bounds: RelativeViewportBounds) {
+    const bottom = 1 - bounds.top - bounds.height;
+    const right = bounds.left + bounds.width;
+    const top = bottom + bounds.height;
+
+    return step(bounds.left, screenUV.x)
+      .mul(step(screenUV.x, right))
+      .mul(step(bottom, screenUV.y))
+      .mul(step(screenUV.y, top));
   }
 }
