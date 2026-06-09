@@ -95,6 +95,7 @@ export class AppFacade {
     this.screenRenderPipeline.dispose();
     this.viewports.forEach((viewport) => {
       viewport.renderPipeline.dispose();
+      viewport.scenePass.dispose();
     });
   }
 

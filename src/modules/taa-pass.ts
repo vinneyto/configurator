@@ -13,6 +13,7 @@ export const createTaaPassModule: ViewportModule = (_facade, viewport) => {
   viewport.renderPipeline.needsUpdate = true;
 
   return () => {
+    traaPass.dispose();
     viewport.renderPipeline.outputNode = previousNode;
     viewport.renderPipeline.needsUpdate = true;
   };
