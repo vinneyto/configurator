@@ -6,7 +6,14 @@ export const createSplitPassModule: AppModule = (facade) => {
   const previousNode = facade.renderPipeline.outputNode;
   const previousColorNode = previousNode as PassNode;
 
-  const rawScenePass = pass(facade.scene, facade.camera);
+  const rawCamera = facade.camera.clone();
+
+  facade.events.on('update', () => {
+    rawCamera.copy(facade.camera);
+    rawCamera.clearViewOffset();
+  });
+
+  const rawScenePass = pass(facade.scene, rawCamera);
 
   const rawColor = rawScenePass.getTextureNode('output');
   const sceneColor = previousColorNode.getTextureNode();
