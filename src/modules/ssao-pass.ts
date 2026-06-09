@@ -1,10 +1,11 @@
 import { ao } from 'three/addons/tsl/display/GTAONode.js';
 import { vec3, vec4 } from 'three/tsl';
 import type { AppModule } from './types';
+import type { PassNode } from 'three/webgpu';
 
 export const createSsaoPassModule: AppModule = (facade) => {
   const previousNode = facade.renderPipeline.outputNode;
-  const previousColorNode = previousNode as ReturnType<typeof vec4>;
+  const previousColorNode = previousNode as PassNode;
 
   const scenePassDepth = facade.scenePass.getTextureNode('depth');
 

@@ -2,10 +2,11 @@ import { FrontSide, Mesh, MeshPhysicalMaterial, UnsignedByteType } from 'three';
 import { ssr } from 'three/addons/tsl/display/SSRNode.js';
 import { add, colorToDirection, sample, vec4 } from 'three/tsl';
 import type { AppModule } from './types';
+import type { PassNode } from 'three/webgpu';
 
 export const createSsrPassModule: AppModule = (facade) => {
   const previousNode = facade.renderPipeline.outputNode;
-  const previousColorNode = previousNode as ReturnType<typeof vec4>;
+  const previousColorNode = previousNode as PassNode;
 
   const scenePassColor = facade.scenePass.getTextureNode('output');
   const scenePassDepth = facade.scenePass.getTextureNode('depth');

@@ -38,6 +38,10 @@ export const createSsgiPassModule: AppModule = (facade) => {
   const unsubscribeSceneRelaxationChanged = facade.events.on(
     'sceneRelaxationChanged',
     ({ relaxed }) => {
+      if (window.devicePixelRatio < 2.0) {
+        return;
+      }
+
       giPass.sliceCount.value = relaxed ? 2 : 1;
       giPass.stepCount.value = relaxed ? 8 : 1;
     }
