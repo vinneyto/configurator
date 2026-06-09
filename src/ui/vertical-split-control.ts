@@ -47,41 +47,21 @@ export class VerticalSplitControl extends EventTarget {
       width: '2px',
       transform: 'translateX(-50%)',
       background: 'rgba(255, 255, 255, 0.58)',
-      boxShadow: '0 0 0 1px rgba(10, 12, 18, 0.25)',
-      transition: 'background 120ms ease, box-shadow 120ms ease, width 120ms ease',
+      transition: 'background 120ms ease',
       pointerEvents: 'none',
     } satisfies Partial<CSSStyleDeclaration>);
 
     this.knobElement = document.createElement('div');
-    this.knobElement.innerHTML = '<span>◀</span><span>▶</span>';
 
     Object.assign(this.knobElement.style, {
       position: 'relative',
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: '2px',
       width: '22px',
       height: '22px',
       borderRadius: '999px',
       border: '1px solid rgba(255, 255, 255, 0.45)',
       background: 'rgba(14, 18, 26, 0.7)',
-      color: 'rgba(255, 255, 255, 0.9)',
-      fontSize: '8px',
-      lineHeight: '1',
-      boxShadow: '0 4px 14px rgba(0, 0, 0, 0.26)',
-      backdropFilter: 'blur(8px)',
-      transition:
-        'transform 120ms ease, background 120ms ease, border-color 120ms ease, box-shadow 120ms ease',
       pointerEvents: 'none',
     } satisfies Partial<CSSStyleDeclaration>);
-
-    for (const triangle of this.knobElement.querySelectorAll('span')) {
-      Object.assign((triangle as HTMLSpanElement).style, {
-        display: 'block',
-        transform: 'translateY(-0.5px)',
-      } satisfies Partial<CSSStyleDeclaration>);
-    }
 
     this.element.append(this.lineElement, this.knobElement);
 
@@ -183,22 +163,7 @@ export class VerticalSplitControl extends EventTarget {
 
   private setHighlighted(highlighted: boolean): void {
     this.lineElement.style.background = highlighted
-      ? 'rgba(255, 255, 255, 0.92)'
+      ? 'rgba(127, 200, 255, 0.92)'
       : 'rgba(255, 255, 255, 0.58)';
-    this.lineElement.style.width = highlighted ? '3px' : '2px';
-    this.lineElement.style.boxShadow = highlighted
-      ? '0 0 0 1px rgba(10, 12, 18, 0.34), 0 0 14px rgba(255, 255, 255, 0.14)'
-      : '0 0 0 1px rgba(10, 12, 18, 0.25)';
-
-    this.knobElement.style.background = highlighted
-      ? 'rgba(26, 33, 46, 0.9)'
-      : 'rgba(14, 18, 26, 0.7)';
-    this.knobElement.style.borderColor = highlighted
-      ? 'rgba(255, 255, 255, 0.8)'
-      : 'rgba(255, 255, 255, 0.45)';
-    this.knobElement.style.transform = highlighted ? 'scale(1.05)' : 'scale(1)';
-    this.knobElement.style.boxShadow = highlighted
-      ? '0 6px 18px rgba(0, 0, 0, 0.34), 0 0 10px rgba(255, 255, 255, 0.12)'
-      : '0 4px 14px rgba(0, 0, 0, 0.26)';
   }
 }
