@@ -16,6 +16,8 @@ import { createTaaPassModule } from './modules/taa-pass';
 import { createModelZFightFixModule } from './modules/model-zfight-fix';
 import { createToneMappingModule } from './modules/tone-mapping';
 import type { AppModule } from './modules/types';
+import { createSplitPassModule } from './modules/split-pass';
+import { createObjectPickDebugModule } from './modules/object-pick-debug';
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
 
@@ -35,6 +37,7 @@ const sceneModules: AppModule[] = [
   createModelParserModule,
   createModelCenteringModule,
   createModelZFightFixModule,
+  createObjectPickDebugModule,
   createBasicLightingModule,
   createToneMappingModule,
   // createIBLLightingModule,
@@ -45,6 +48,7 @@ const postprocessingModules: AppModule[] = [
   createSsaoPassModule,
   createSsrPassModule,
   createTaaPassModule,
+  createSplitPassModule,
 ];
 
 const instantiateModules = (modules: AppModule[]): Array<() => void> =>
