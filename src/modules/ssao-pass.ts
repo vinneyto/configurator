@@ -12,6 +12,7 @@ export const createSsaoPassModule: AppModule = (facade) => {
   // @ts-expect-error
   const aoPass = ao(scenePassDepth, null, facade.camera);
   aoPass.resolutionScale = 0.5;
+  aoPass.scale.value = 0.75;
 
   const aoFactor = vec3(aoPass);
   const ssaoCompositePass = vec4(previousColorNode.rgb.mul(aoFactor.x), previousColorNode.a);
