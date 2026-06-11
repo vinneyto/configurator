@@ -1,4 +1,12 @@
-import { ACESFilmicToneMapping, Color, Group, PerspectiveCamera, Scene, Timer } from 'three';
+import {
+  ACESFilmicToneMapping,
+  Color,
+  Group,
+  PerspectiveCamera,
+  Scene,
+  Timer,
+  VSMShadowMap,
+} from 'three';
 import { RenderPipeline, WebGPURenderer } from 'three/webgpu';
 import {
   diffuseColor,
@@ -39,6 +47,8 @@ export class AppFacade {
       requiredLimits: { maxColorAttachmentBytesPerSample: 128 },
     });
     this.renderer.toneMapping = ACESFilmicToneMapping;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = VSMShadowMap;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(container.clientWidth, container.clientHeight);
 

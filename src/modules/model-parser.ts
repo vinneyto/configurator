@@ -1,3 +1,4 @@
+import { Mesh } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { CameraParams } from '../core/events';
 import type { AppModule } from './types';
@@ -16,6 +17,14 @@ export const createModelParserModule: AppModule = (facade) => {
 
       facade.scene.remove(facade.modelRoot);
       facade.modelRoot = gltf.scene;
+      facade.modelRoot.traverse((object) => {
+        if (!(object instanceof Mesh)) {
+          return;
+        }
+
+        object.castShadow = true;
+        object.receiveShadow = true;
+      });
       facade.scene.add(facade.modelRoot);
 
       facade.events.emit('modelAdded', {

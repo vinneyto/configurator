@@ -1,11 +1,9 @@
-import { pass, sample, select, uniform, vec2 } from 'three/tsl';
+import { convertToTexture, pass, sample, select, uniform, vec2 } from 'three/tsl';
 import type { AppModule } from './types';
-import { type PassNode } from 'three/webgpu';
 import { VerticalSplitControl } from '../ui/vertical-split-control';
 
 export const createSplitPassModule: AppModule = (facade) => {
   const previousNode = facade.renderPipeline.outputNode;
-  const previousColorNode = previousNode as PassNode;
 
   const rawCamera = facade.camera.clone();
 
@@ -21,7 +19,7 @@ export const createSplitPassModule: AppModule = (facade) => {
   const rawScenePass = pass(facade.scene, rawCamera);
 
   const rawColor = rawScenePass.getTextureNode('output');
-  const sceneColor = previousColorNode.getTextureNode();
+  const sceneColor = convertToTexture(previousNode);
 
   const ratio = uniform(0.5);
 
