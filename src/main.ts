@@ -18,6 +18,7 @@ import { createToneMappingModule } from './modules/tone-mapping';
 import type { AppModule } from './modules/types';
 import { createSplitPassModule } from './modules/split-pass';
 import { createObjectPickDebugModule } from './modules/object-pick-debug';
+import { createCoolBrightPassModule } from './modules/cool-bright-pass';
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
 
@@ -48,6 +49,7 @@ const postprocessingModules: AppModule[] = [
   createSsaoPassModule,
   createSsrPassModule,
   createTaaPassModule,
+  createCoolBrightPassModule,
   createSplitPassModule,
 ];
 
