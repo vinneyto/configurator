@@ -28,15 +28,13 @@ export const createBasicLightingModule: AppModule = (facade) => {
   helper.visible = false;
 
   const flashlight = new SpotLight(0xfff4de, 85, 5, Math.PI / 6, 0.5, 2);
-  flashlight.position.copy(keyLight.position);
-  flashlight.position.y -= 0.06;
+  flashlight.position.set(0, -0.06, 0);
   flashlight.castShadow = true;
   flashlight.shadow.mapSize.width = 1024;
   flashlight.shadow.mapSize.height = 1024;
   flashlight.shadow.bias = -0.00015;
   flashlight.shadow.normalBias = 0.02;
   flashlight.shadow.radius = 1.6;
-  flashlight.target.position.set(keyLight.position.x, -2, keyLight.position.z);
 
   const flashlightBulb = new Mesh(
     new SphereGeometry(0.035, 16, 12),
@@ -44,10 +42,13 @@ export const createBasicLightingModule: AppModule = (facade) => {
   );
   flashlightBulb.position.copy(flashlight.position);
 
-  facade.scene.add(keyLight, fillLight, flashlight, flashlight.target, flashlightBulb);
+  flashlight.target.position.set(0, -3, 0);
+  keyLight.add(flashlight, flashlightBulb);
+  facade.scene.add(keyLight, fillLight, flashlight.target);
 
   return () => {
-    facade.scene.remove(keyLight, fillLight, flashlight, flashlight.target, flashlightBulb);
+    keyLight.remove(flashlight, flashlightBulb);
+    facade.scene.remove(keyLight, fillLight, flashlight.target);
     flashlight.shadow.dispose();
     flashlightBulb.geometry.dispose();
     flashlightBulb.material.dispose();
