@@ -1,16 +1,16 @@
 # configurator
 
-Отчёт по текущему состоянию рендер-пайплайна и качеству модели.
+Report on the current state of the rendering pipeline and model quality.
 
-## Модульная архитектура
+## Modular architecture
 
-Проект собран из модулей `AppModule`:
+The project is assembled from `AppModule` modules:
 
-- каждый модуль получает `facade`;
-- настраивает часть сцены/постпроцессинга;
-- возвращает teardown-функцию.
+- each module receives `facade`;
+- configures part of the scene/postprocessing;
+- returns a teardown function.
 
-Модули запускаются в `main.ts` в двух группах.
+The modules are launched in `main.ts` in two groups.
 
 ### Scene modules
 
@@ -31,118 +31,118 @@
 - `createSsrPassModule`
 - `createTaaPassModule`
 
-Teardown выполняется в обратном порядке.
+Teardown runs in reverse order.
 
-## Постпроцессинг (по коду)
+## Postprocessing (from the code)
 
-Текущая цепочка:
+Current chain:
 
 1. SSGI
-2. SSAO (через GTAO node)
+2. SSAO (via GTAO node)
 3. SSR
 4. TRAA/TAA
 
-Пасы совмещаются следующим образом:
+The passes are combined as follows:
 
-- модули с пасами инициализируются по порядку;
-- каждый следующий пасс берёт output предыдущего и интегрирует его в свой алгоритм блендинга;
-- любой модуль с пассом можно закомментировать: пайплайн продолжит работать, просто без соответствующего эффекта постпроцессинга.
+- pass modules are initialized in order;
+- each subsequent pass takes the previous pass output and integrates it into its blending algorithm;
+- any pass module can be commented out: the pipeline will continue to work, just without the corresponding postprocessing effect.
 
-Дополнительно:
+Additionally:
 
-- SSAO и SSR работают в half-resolution (`resolutionScale = 0.5`);
-- при движении камеры SSGI упрощается по параметрам (ниже).
+- SSAO and SSR run in half resolution (`resolutionScale = 0.5`);
+- when the camera is moving, SSGI is simplified via its parameters (see below).
 
-## Препроцессинг модели при загрузке
+## Model preprocessing on load
 
-Перед парсингом GLB выполняется:
+Before GLB parsing, the following runs:
 
 - `await document.transform(metalRough())`
 
-Это нужно, чтобы не получать предупреждение:
+This is needed to avoid the warning:
 
 - `THREE.GLTFLoader: Unknown extension "KHR_materials_pbrSpecularGlossiness"`
 
-По сути идёт конвертация материала из specular-glossiness в metallic-roughness.
+In practice, this converts the material from specular-glossiness to metallic-roughness.
 
 ## Z-fighting
 
-В модели есть z-fight. Текущий runtime-workaround:
+The model has z-fighting. Current runtime workaround:
 
-- рекурсивно всем объектам модели применяется `scale *= 1.0001`.
+- `scale *= 1.0001` is applied recursively to all model objects.
 
-Это рабочий временный фикс, но правильнее править геометрию в Blender.
+This is a working temporary fix, but the proper fix is to correct the geometry in Blender.
 
-## Нормали и влияние на SSGI/SSAO
+## Normals and their effect on SSGI/SSAO
 
-В модели есть объекты с инвертированными нормалями.
+The model contains objects with inverted normals.
 
-Последствия:
+Consequences:
 
-- деградация SSGI;
-- чрезмерное затемнение в SSAO на проблемных мешах.
+- SSGI degradation;
+- excessive darkening in SSAO on problematic meshes.
 
-Рекомендация:
+Recommendation:
 
-- исправлять нормали в Blender (предпочтительно);
-- для SSAO допустим обходной путь: рассчитывать нормали из depth, чтобы ослабить артефакты на проблемных объектах.
+- fix the normals in Blender (preferred);
+- for SSAO, an acceptable workaround is to derive normals from depth to reduce artifacts on problematic objects.
 
-## Прозрачные объекты
+## Transparent objects
 
-Сейчас прозрачные объекты не вынесены в отдельный поздний проход.
+Transparent objects are not currently separated into a dedicated late pass.
 
-Проблема:
+Problem:
 
-- они вносят вклад в normal/depth-контекст screen-space эффектов;
-- пример: при взгляде на раковину через прозрачное стекло ванной SSGI работает хуже.
+- they contribute to the normal/depth context of screen-space effects;
+- example: when looking at the sink through the bathroom glass, SSGI works worse.
 
-Рекомендация:
+Recommendation:
 
-- рендерить transparent-объекты отдельным pass после основного opaque + postprocessing пайплайна.
+- render transparent objects in a separate pass after the main opaque + postprocessing pipeline.
 
-## Оптимизация SSGI при движении
+## SSGI optimization while moving
 
-При событии `sceneRelaxationChanged` параметры SSGI переключаются:
+On the `sceneRelaxationChanged` event, SSGI parameters switch as follows:
 
-- в движении (scene tense): `sliceCount = 1`, `stepCount = 1`;
-- в покое (scene relaxed): `sliceCount = 2`, `stepCount = 8`.
+- while moving (scene tense): `sliceCount = 1`, `stepCount = 1`;
+- at rest (scene relaxed): `sliceCount = 2`, `stepCount = 8`.
 
-Это сохраняет отзывчивость камеры и повышает качество в статике.
+This preserves camera responsiveness and improves quality when the scene is static.
 
-## Центрирование модели
+## Model centering
 
-После загрузки модель центрируется по bbox:
+After loading, the model is centered by bbox:
 
-- вычисляется `Box3`;
-- берётся центр;
-- позиция `modelRoot` сдвигается так, чтобы центр модели был в нуле сцены.
+- `Box3` is computed;
+- its center is taken;
+- `modelRoot` position is shifted so the model center is at the scene origin.
 
-## Темпоральное сглаживание
+## Temporal anti-aliasing
 
-Используется TRAA/TAA:
+TRAA/TAA is used:
 
-- снижает шум от SSGI;
-- визуально стабилизирует изображение в статике.
+- reduces noise from SSGI;
+- visually stabilizes the image when static.
 
-## Освещение
+## Lighting
 
-Текущий выбор:
+Current choice:
 
-- `RectAreaLight` (ключевой свет, «прямоугольная лампочка»);
-- `AmbientLight` как fill.
+- `RectAreaLight` (key light, a “rectangular bulb”);
+- `AmbientLight` as fill.
 
-IBL проверялся, но по визуальному результату выбран вариант с обычной лампочкой.
+IBL was tested, but based on the visual result the regular lamp option was chosen.
 
-## Проверка работоспособности и лимиты
+## Validation and limits
 
-Наблюдение при проверке на macOS (MacBook):
+Observation during validation on macOS (MacBook):
 
-- пришлось увеличить лимит `maxColorAttachmentBytesPerSample`, иначе рендер упирался в ограничение;
-- причина в том, что scene pass отдаёт много color attachments;
-- потенциальная зона оптимизации: сократить число/вес цветовых аттачментов в scene pass.
+- it was necessary to increase `maxColorAttachmentBytesPerSample`, otherwise rendering hit the limit;
+- the reason is that the scene pass outputs many color attachments;
+- a potential optimization area is to reduce the number/weight of color attachments in the scene pass.
 
-Кросс-девайс-проверка:
+Cross-device validation:
 
-- на бюджетном Android пайплайн работает;
-- на мощном iPhone пайплайн тоже работает;
-- производительность на обоих устройствах — приемлемая.
+- the pipeline works on a budget Android device;
+- the pipeline also works on a powerful iPhone;
+- performance on both devices is acceptable.
