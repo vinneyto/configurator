@@ -18,7 +18,6 @@ import { createToneMappingModule } from './modules/tone-mapping';
 import type { AppModule } from './modules/types';
 import { createSplitPassModule } from './modules/split-pass';
 import { createObjectPickDebugModule } from './modules/object-pick-debug';
-import { createModelShadowsModule } from './modules/model-shadows';
 import { createGlowPassModule } from './modules/glow-pass';
 
 const appRoot = document.querySelector<HTMLDivElement>('#app');
@@ -39,7 +38,6 @@ const sceneModules: AppModule[] = [
   createModelParserModule,
   createModelCenteringModule,
   createModelZFightFixModule,
-  createModelShadowsModule,
   createObjectPickDebugModule,
   createBasicLightingModule,
   createToneMappingModule,
