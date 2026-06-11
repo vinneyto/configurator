@@ -10,7 +10,7 @@ export const createBasicLightingModule: AppModule = (facade) => {
   const fillLight = new AmbientLight(0xffffff, 0.45);
   fillLight.intensity = 1.5;
 
-  const keyLight = new RectAreaLight(0xffffff, 100, 1.8, 0.1);
+  const keyLight = new RectAreaLight(0xffffff, 115, 1.8, 0.1);
 
   keyLight.position.y = 1.3;
   keyLight.position.z = 1.1;
