@@ -1,11 +1,4 @@
-import {
-  AmbientLight,
-  Mesh,
-  MeshBasicMaterial,
-  RectAreaLight,
-  SphereGeometry,
-  SpotLight,
-} from 'three';
+import { AmbientLight, RectAreaLight, SpotLight } from 'three';
 import type { AppModule } from './types';
 import { RectAreaLightNode } from 'three/webgpu';
 import { RectAreaLightTexturesLib } from 'three/examples/jsm/lights/RectAreaLightTexturesLib.js';
@@ -36,21 +29,13 @@ export const createBasicLightingModule: AppModule = (facade) => {
   flashlight.shadow.normalBias = 0.02;
   flashlight.shadow.radius = 1.6;
 
-  const flashlightBulb = new Mesh(
-    new SphereGeometry(0.035, 16, 12),
-    new MeshBasicMaterial({ color: 0xfff2d2 })
-  );
-  flashlightBulb.position.copy(flashlight.position);
-
   flashlight.target.position.set(0, -3, 0);
-  keyLight.add(flashlight, flashlightBulb);
+  keyLight.add(flashlight);
   facade.scene.add(keyLight, fillLight, flashlight.target);
 
   return () => {
-    keyLight.remove(flashlight, flashlightBulb);
+    keyLight.remove(flashlight);
     facade.scene.remove(keyLight, fillLight, flashlight.target);
     flashlight.shadow.dispose();
-    flashlightBulb.geometry.dispose();
-    flashlightBulb.material.dispose();
   };
 };
