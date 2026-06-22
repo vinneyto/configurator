@@ -22,6 +22,7 @@
     "*.{js,ts,jsx,tsx,css,scss,html,json,md,yml,yaml}": "prettier --write"
   },
   "dependencies": {
+    "@gaussforge/wasm": "^0.6.0",
     "@gltf-transform/core": "^4.3.0",
     "@gltf-transform/extensions": "^4.3.0",
     "@gltf-transform/functions": "^4.3.0",

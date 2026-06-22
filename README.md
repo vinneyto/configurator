@@ -2,6 +2,23 @@
 
 Report on the current state of the rendering pipeline and model quality.
 
+## Bootstrap modes
+
+The app now supports two startup modes via query string:
+
+- default mode: `/`
+- 3DGS mode: `/?mode=3dgs`
+
+`default` keeps the current GLB + postprocessing stack.
+
+`3dgs` uses a minimal module set:
+
+- viewport resize
+- orbit controls
+- scene relaxation
+- FPS counter
+- splat loader
+
 ## Modular architecture
 
 The project is assembled from `AppModule` modules:
