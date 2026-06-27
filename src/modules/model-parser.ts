@@ -12,7 +12,7 @@ export const createModelParserModule: AppModule = (facade) => {
 
   const unsubscribeLoadModel = facade.events.on('loadModel', async (event) => {
     try {
-      const gltf = await loader.parseAsync(event.buffer, '');
+      const gltf = await loader.parseAsync(event.data as ArrayBuffer, '');
 
       facade.scene.remove(facade.modelRoot);
       facade.modelRoot = gltf.scene;

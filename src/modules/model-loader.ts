@@ -29,7 +29,7 @@ export const createModelLoaderModule: AppModule = (facade) => {
 
   loadAndTransform(abortController.signal)
     .then((glb) => {
-      facade.events.emit('loadModel', { buffer: glb.buffer });
+      facade.events.emit('loadModel', { data: glb.buffer });
     })
     .catch((error) => {
       console.error(`Failed to load ${BATHROOM_MODEL_URL}`, error);

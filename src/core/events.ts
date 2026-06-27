@@ -6,7 +6,7 @@ export type UpdateEvent = {
 };
 
 export type LoadModelEvent = {
-  buffer: ArrayBuffer;
+  data?: unknown;
 };
 
 export type CameraParams = {
